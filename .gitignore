@@ -1,11 +1,7 @@
 __pycache__
-*.idea/
-*.ipynb
-slurm*
 *.csv
 *.latent
-*.sh
 storage/
-autoencoder/9*
-
-
+Deep-Drug-Coder/
+molvecgen/
+ddc_pub
