@@ -16,7 +16,7 @@ IMPORTANT: The Deep Drug Coder on the main branch runs with tensorflow 2.0, and 
 3.  Clone this repo using `git clone https://github.com/Dierme/latent-gan.git`
 4.  Create conda environment from .yml file `conda env create --file environment.yml`
 5.  Download dependencies Deep Drug Coder and molvecgen
-6.  move ``Deep-Drug-Coder/ddc_pub/` and `molvecgen/molvecgen` to the root folder (to solve import references from the Deep-Drug-Coder)
+6.  move `Deep-Drug-Coder/ddc_pub/` and `molvecgen/molvecgen` to the root folder (to solve import references from the Deep-Drug-Coder)
 ~~~
 mv Deep-Drug-Coder/ddc_pub/ .
 mv molvecgen/molvecgen tmp/
