@@ -31,7 +31,6 @@ def encode(smiles_file, output_smiles_file_path=None, encoder=None):
         json.dump(latent.tolist(), f)
 
     print('Success!')
-    return
 
 
 if __name__ == "__main__":

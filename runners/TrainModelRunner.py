@@ -176,7 +176,6 @@ class TrainModelRunner:
             print("Sampling done. Decoding latent vectors into SMILES")
             decode(sampled_mols_save_path, self.decode_mols_save_path)
 
-        return 0
 
     def compute_gradient_penalty(self, real_samples, fake_samples):
         """Calculates the gradient penalty loss for WGAN GP"""

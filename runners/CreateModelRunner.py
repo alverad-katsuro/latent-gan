@@ -34,4 +34,3 @@ class CreateModelRunner:
         generator_path = os.path.join(self.output_model_folder, 'generator.txt')
         G.save(generator_path)
 
-        return True
