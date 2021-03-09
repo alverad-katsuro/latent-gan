@@ -26,7 +26,7 @@ def decode(latent_mols_file, output_smiles_file_path=None, message=''):
         for indx in range(0, n // batch_size):
             lat = np.array(latent[(indx) * 256:(indx + 1) * 256])
             if indx % 10 == 0:
-                print("[%d/%d] [Invalids: %s]" % (indx, n // batch_size + 1, invalids))
+                print("Batch [%d/%d] decoded, [Invalids: %s]" % (indx, n // batch_size + 1, invalids))
                 sys.stdout.flush()
                 smiles_file.flush()
             smiles, _ = model.predict_batch(lat, temp=0)
@@ -36,7 +36,7 @@ def decode(latent_mols_file, output_smiles_file_path=None, message=''):
                 mol = Chem.MolFromSmiles(smi)
                 if not mol:
                     invalids += 1
-
+    print("Decoding completed.")
     print("Total: [%d] Fraction Valid: [0.%d]" % (n, (n - invalids) / n * 100))
 
 

@@ -15,6 +15,7 @@ def load_model(model_version=None):
 
 
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)), model_name)
+    print('Loading heteroencoder model from:', path)
     model = ddc.DDC(model_name=path)
 
     return model

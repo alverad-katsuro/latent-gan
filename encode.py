@@ -30,7 +30,7 @@ def encode(smiles_file, output_smiles_file_path=None, encoder=None):
     with open(output_smiles_file_path, 'w') as f:
         json.dump(latent.tolist(), f)
 
-    print('Success!')
+    print('Encoding completed!')
 
 
 if __name__ == "__main__":

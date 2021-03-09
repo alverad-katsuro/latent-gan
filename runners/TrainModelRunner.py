@@ -11,6 +11,7 @@ import numpy as np
 import json
 import time
 import sys
+from tqdm import tqdm
 
 
 class TrainModelRunner:
@@ -72,7 +73,7 @@ class TrainModelRunner:
 
     def run(self):
 
-        print("Run began.")
+        print("Training of GAN started.")
         print("Message: %s" % self.message)
         sys.stdout.flush()
 
@@ -83,7 +84,7 @@ class TrainModelRunner:
         for epoch in range(self.starting_epoch, self.n_epochs + self.starting_epoch):
             disc_loss_per_batch = []
             g_loss_log_per_batch = []
-            for i, real_mols in enumerate(self.dataloader):
+            for i, real_mols in enumerate(tqdm(self.dataloader)):
 
                 # Configure input
                 real_mols = real_mols.type(self.Tensor)

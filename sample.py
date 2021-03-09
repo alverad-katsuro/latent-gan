@@ -5,7 +5,7 @@ from models.Generator import Generator
 from src.Sampler import Sampler
 
 
-def sample(generator_path, output_sampled_latent_file, number_samples=50000, message='samling the generator',
+def sample(generator_path, output_sampled_latent_file, number_samples=50000, message='Sampling the generator',
            decode_sampled=False, output_decoded_smiles_file=''):
     print(message)
     sys.stdout.flush()
