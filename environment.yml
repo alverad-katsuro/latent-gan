@@ -14,7 +14,7 @@ dependencies:
   - boost-cpp=1.74.0=hc6e9bd1_2
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.17.1=h27cfd23_0
-  - ca-certificates=2021.1.19=h06a4308_0
+  - ca-certificates=2021.1.19=h06a4308_1
   - cairo=1.16.0=h7979940_1007
   - certifi=2020.12.5=py36h06a4308_0
   - cffi=1.14.5=py36h261ae71_0
@@ -106,6 +106,7 @@ dependencies:
   - termcolor=1.1.0=py36h06a4308_1
   - tk=8.6.10=hbc83047_0
   - tornado=6.1=py36h8f6f2f9_1
+  - tqdm=4.56.0=pyhd3eb1b0_0
   - werkzeug=1.0.1=pyhd3eb1b0_0
   - wheel=0.36.2=pyhd3eb1b0_0
   - xorg-kbproto=1.0.7=h7f98852_1002
@@ -130,5 +131,3 @@ dependencies:
     - scikit-learn==0.24.1
     - sklearn==0.0
     - threadpoolctl==2.1.0
-prefix: /home/kpsg824/miniconda3/envs/latent_gan_env
-
