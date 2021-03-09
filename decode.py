@@ -29,7 +29,6 @@ def decode(latent_mols_file, output_smiles_file_path=None, message=''):
                 print("[%d/%d] [Invalids: %s]" % (indx, n // batch_size + 1, invalids))
                 sys.stdout.flush()
                 smiles_file.flush()
-            # obs = np.squeeze(lat, 1)
             smiles, _ = model.predict_batch(lat, temp=0)
             for smi in smiles:
 

@@ -87,7 +87,7 @@ class TrainModelRunner:
 
                 # Configure input
                 real_mols = real_mols.type(self.Tensor)
-                # real_mols = np.squeeze(real_mols, axis=1)
+                
 
                 # ---------------------
                 #  Train Discriminator
