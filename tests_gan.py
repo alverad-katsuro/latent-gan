@@ -35,6 +35,24 @@ class test_GAN(unittest.TestCase):
             self.assertTrue(type(optimizer_G) == type(optimizer_D))  # must return the same type of object
             self.assertTrue(optimizer_G is not optimizer_D)          # object identity MUST be different
     
+    def test_generator_shape(self):
+        # Test to verify that the same dimension network is created invariant of smiles input file size
+        with TemporaryDirectory() as tmpdirname:
+            for j in [1, 64, 256, 1024]:
+                latent=np.random.rand(j,1,512)
+                os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
+                with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
+                    json.dump(latent.tolist(), f)
+                C = CreateModelRunner(input_data_path=tmpdirname+'/encoded_smiles.latent', output_model_folder=tmpdirname)
+                C.run()
+                G = Generator.load(tmpdirname+'/generator.txt')
+                G_params = []
+                for param in G.parameters():
+                        G_params.append(param.view(-1))
+                G_params = torch.cat(G_params)
+                reference= 1283968
+                self.assertEqual(G_params.shape[0],reference,"Network does not match expected size")
+         
     def test_sampler_cuda(self):
         # Verify that the output of sampler is a CUDA tensor and not a CPU tensor when input is on CUDA
         # The CPU case is not interesting because heteroencoder would have failed to load
