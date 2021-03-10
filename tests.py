@@ -1,12 +1,14 @@
-from autoencoder import autoencoder
+from ddc_pub import ddc_v3 as ddc
 from rdkit import Chem
 import numpy as np
 import unittest
+import os
 
 
 class test_heteroencoder(unittest.TestCase):
     def setUp(self):
-        self.model = autoencoder.load_model(model_version='chembl')
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'autoencoder/chembl_pretrained')
+        self.model = ddc.DDC(model_name=path)
         self.reference_molecule= 'CC(=O)OC1=CC=CC=C1C(=O)O'
         self.binarization= [Chem.rdchem.Mol.ToBinary(Chem.MolFromSmiles(self.reference_molecule))]
         
