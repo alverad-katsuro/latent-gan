@@ -12,6 +12,15 @@ class test_heteroencoder(unittest.TestCase):
         self.reference_molecule= 'CC(=O)OC1=CC=CC=C1C(=O)O'
         self.binarization= [Chem.rdchem.Mol.ToBinary(Chem.MolFromSmiles(self.reference_molecule))]
         
+    def test_decoder_different_obj(self):
+        # Two calls of the same function should yield two different objects in memory
+        #  or the following tests have no meaning.
+        latent=np.random.rand(1,1,512)
+        latent=latent.squeeze(0)
+        first, _ = self.model.predict(latent, temp=0)
+        second, _= self.model.predict(latent, temp=0)
+        self.assertTrue(first is not second)    
+        
     def test_decoder_deterministic(self):
         # The decoder is deterministic and should have no variance when decoding the same latent vector
         latent=np.random.rand(1,1,512)
