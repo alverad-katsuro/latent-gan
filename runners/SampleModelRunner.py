@@ -4,9 +4,7 @@ import torch
 import json
 
 
-class TrainModelRunner:
-    # Loss weight for gradient penalty
-    lambda_gp = 10
+class SampleModelRunner:
 
     def __init__(self, output_smiles_file, input_model_path, sample_number):
         # init params
