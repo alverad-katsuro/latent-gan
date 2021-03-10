@@ -99,8 +99,6 @@ class test_GAN(unittest.TestCase):
         
     def test_gradient_penalty_non_zero(self):
         # Test to verify that a non-zero gradient penalty is computed on the from the first training step
-        # This implies that an initialized discriminator gives different output for the generated
-        # vector compared to the real input
         with TemporaryDirectory() as tmpdirname:
             latent=np.random.rand(64,1,512)
             os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
