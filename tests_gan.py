@@ -9,6 +9,7 @@ import json
 from src.Sampler import Sampler
 from datasets.LatentMolsDataset import LatentMolsDataset
 import os
+import torch.autograd as autograd
 
 class test_GAN(unittest.TestCase):
     #These tests are heavily inspired by the blog post of Chase Roberts:
@@ -70,7 +71,7 @@ class test_GAN(unittest.TestCase):
                 D_params = torch.cat(D_params)
                 reference= 394241
                 self.assertEqual(D_params.shape[0],reference,"Network does not match expected size")
-         
+                      
     def test_sampler_cuda(self):
         # Verify that the output of sampler is a CUDA tensor and not a CPU tensor when input is on CUDA
         # The CPU case is not interesting because heteroencoder would have failed to load
@@ -95,7 +96,48 @@ class test_GAN(unittest.TestCase):
                 fake_mols = testSampler.sample(real_mols.shape[0])
                 self.assertTrue(type(real_mols) == type(fake_mols))
                 break
-                
+        
+    def test_gradient_penalty_non_zero(self):
+        # Test to verify that a non-zero gradient penalty is computed on the from the first training step
+        # This implies that an initialized discriminator gives different output for the generated
+        # vector compared to the real input
+        with TemporaryDirectory() as tmpdirname:
+            latent=np.random.rand(64,1,512)
+            os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
+            with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
+                json.dump(latent.tolist(), f)
+            C = CreateModelRunner(input_data_path=tmpdirname+'/encoded_smiles.latent', output_model_folder=tmpdirname)
+            C.run()
+            D = Discriminator.load(tmpdirname+'/discriminator.txt')
+            G = Generator.load(tmpdirname+'/generator.txt')
+            json_smiles = open(tmpdirname+'/encoded_smiles.latent', "r")
+            latent_space_mols = np.array(json.load(json_smiles))
+            testSampler = Sampler(G)
+            latent_space_mols = latent_space_mols.reshape(latent_space_mols.shape[0], 512)
+            T = torch.cuda.FloatTensor
+            G.cuda()
+            D.cuda()
+            dataloader = torch.utils.data.DataLoader(LatentMolsDataset(latent_space_mols), shuffle=True,
+                                                        batch_size=64, drop_last=True)
+            for _, real_mols in enumerate(dataloader):
+                real_mols = real_mols.type(T)
+                fake_mols = testSampler.sample(real_mols.shape[0])   
+                alpha = T(np.random.random((real_mols.size(0), 1)))
+                interpolates = (alpha * real_mols + ((1 - alpha) * fake_mols)).requires_grad_(True)
+                d_interpolates = D(interpolates)
+                fake = T(real_mols.shape[0], 1).fill_(1.0)
+                gradients = autograd.grad(
+                    outputs=d_interpolates,
+                    inputs=interpolates,
+                    grad_outputs=fake,
+                    create_graph=True,
+                    retain_graph=True,
+                    only_inputs=True,
+                )[0]
+                gradients = gradients.view(gradients.size(0), -1)
+                gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean() 
+                self.assertTrue(gradient_penalty.data != 0)     
+                break   
             
     def test_model_trains(self):
         # Performs one step of training and verifies that the weights are updated, implying some training occurs.
