@@ -52,6 +52,24 @@ class test_GAN(unittest.TestCase):
                 G_params = torch.cat(G_params)
                 reference= 1283968
                 self.assertEqual(G_params.shape[0],reference,"Network does not match expected size")
+    
+    def test_discriminator_shape(self):
+        # Test to verify that the same dimension network is created invariant of smiles input file size
+        with TemporaryDirectory() as tmpdirname:
+            for j in [1, 64, 256, 1024]:
+                latent=np.random.rand(j,1,512)
+                os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
+                with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
+                    json.dump(latent.tolist(), f)
+                C = CreateModelRunner(input_data_path=tmpdirname+'/encoded_smiles.latent', output_model_folder=tmpdirname)
+                C.run()
+                D = Discriminator.load(tmpdirname+'/discriminator.txt')
+                D_params = []
+                for param in D.parameters():
+                        D_params.append(param.view(-1))
+                D_params = torch.cat(D_params)
+                reference= 394241
+                self.assertEqual(D_params.shape[0],reference,"Network does not match expected size")
          
     def test_sampler_cuda(self):
         # Verify that the output of sampler is a CUDA tensor and not a CPU tensor when input is on CUDA
