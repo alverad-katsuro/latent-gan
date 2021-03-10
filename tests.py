@@ -14,8 +14,7 @@ class test_heteroencoder(unittest.TestCase):
         
     def test_decoder_deterministic(self):
         # The decoder is deterministic and should have no variance when decoding the same latent vector
-        # Note that Encoder has a noise component and this latent vector can vary between runs
-        latent = self.model.transform(self.model.vectorize(self.binarization))
+        latent=np.random.rand(1,1,512)
         latent=latent.squeeze(0)
         first, _ = self.model.predict(latent, temp=0)
         second, _= self.model.predict(latent, temp=0)
