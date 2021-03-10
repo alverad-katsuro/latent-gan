@@ -34,6 +34,32 @@ class test_GAN(unittest.TestCase):
             optimizer_D = torch.optim.Adam(D.parameters())
             self.assertTrue(type(optimizer_G) == type(optimizer_D))  # must return the same type of object
             self.assertTrue(optimizer_G is not optimizer_D)          # object identity MUST be different
+    
+    def test_sampler_cuda(self):
+        # Verify that the output of sampler is a CUDA tensor and not a CPU tensor when input is on CUDA
+        # The CPU case is not interesting because heteroencoder would have failed to load
+        with TemporaryDirectory() as tmpdirname:
+            latent=np.random.rand(64,1,512)
+            os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
+            with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
+                json.dump(latent.tolist(), f)
+            C = CreateModelRunner(input_data_path=tmpdirname+'/encoded_smiles.latent', output_model_folder=tmpdirname)
+            C.run()
+            G = Generator.load(tmpdirname+'/generator.txt')
+            json_smiles = open(tmpdirname+'/encoded_smiles.latent', "r")
+            latent_space_mols = np.array(json.load(json_smiles))
+            testSampler = Sampler(G)
+            latent_space_mols = latent_space_mols.reshape(latent_space_mols.shape[0], 512)
+            T = torch.cuda.FloatTensor
+            G.cuda()
+            dataloader = torch.utils.data.DataLoader(LatentMolsDataset(latent_space_mols), shuffle=True,
+                                                        batch_size=64, drop_last=True)
+            for _, real_mols in enumerate(dataloader):
+                real_mols = real_mols.type(T)
+                fake_mols = testSampler.sample(real_mols.shape[0])
+                self.assertTrue(type(real_mols) == type(fake_mols))
+                break
+                
             
     def test_model_trains(self):
         # Performs one step of training and verifies that the weights are updated, implying some training occurs.
