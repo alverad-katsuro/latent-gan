@@ -1,23 +1,31 @@
 from tempfile import TemporaryDirectory
-from encode import encode
 from runners.CreateModelRunner import CreateModelRunner
 from models.Discriminator import Discriminator
 from models.Generator import Generator
-from runners.TrainModelRunner import TrainModelRunner
 import torch
 import unittest
 import numpy as np
 import json
 from src.Sampler import Sampler
 from datasets.LatentMolsDataset import LatentMolsDataset
+import os
 
 class test_GAN(unittest.TestCase):
+    #These tests are heavily inspired by the blog post of Chase Roberts:
+    # https://medium.com/@keeper6928/how-to-unit-test-machine-learning-code-57cf6fd81765
+    # We can replace a real encoding of SMILES into latent vectors with a randomly
+    #  initialized numpy array because we only want to check whether the GAN initializes properly.
     
     def test_separate_optimizers(self):
         # Verify that two different instances of the optimizer is created using the TrainModelRunner.py initialization
         # This ensures the two components train separately 
         with TemporaryDirectory() as tmpdirname:
-            encode(smiles_file="data/EGFR_training.smi", output_smiles_file_path=tmpdirname+'/encoded_smiles.latent',encoder='chembl')
+            
+            latent=np.random.rand(64,1,512)
+            os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
+            with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
+                json.dump(latent.tolist(), f)
+
             C = CreateModelRunner(input_data_path=tmpdirname+'/encoded_smiles.latent', output_model_folder=tmpdirname)
             C.run()
             D = Discriminator.load(tmpdirname+'/discriminator.txt')
@@ -31,7 +39,13 @@ class test_GAN(unittest.TestCase):
         # Performs one step of training and verifies that the weights are updated, implying some training occurs.
         with TemporaryDirectory() as tmpdirname:
             T = torch.cuda.FloatTensor
-            encode(smiles_file="data/EGFR_training.smi", output_smiles_file_path=tmpdirname+'/encoded_smiles.latent',encoder='chembl')
+            # Writing JSON data
+            
+            latent=np.random.rand(64,1,512)
+            os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
+            with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
+                json.dump(latent.tolist(), f)
+            
             C = CreateModelRunner(input_data_path=tmpdirname+'/encoded_smiles.latent', output_model_folder=tmpdirname)
             C.run()
             D = Discriminator.load(tmpdirname+'/discriminator.txt')
