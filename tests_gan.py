@@ -71,10 +71,25 @@ class test_GAN(unittest.TestCase):
                 D_params = torch.cat(D_params)
                 reference= 394241
                 self.assertEqual(D_params.shape[0],reference,"Network does not match expected size")
+                
+    def test_sampler_n(self):
+        # Verify that the sampler outputs the desired number of output latent vectors.
+        with TemporaryDirectory() as tmpdirname:
+            latent=np.random.rand(64,1,512)
+            os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
+            with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
+                json.dump(latent.tolist(), f)
+            C = CreateModelRunner(input_data_path=tmpdirname+'/encoded_smiles.latent', output_model_folder=tmpdirname)
+            C.run()
+            G = Generator.load(tmpdirname+'/generator.txt')
+            G.cuda()
+            testSampler = Sampler(G)
+            samples = testSampler.sample(256)
+            self.assertEqual(samples.shape[0],256, "Sampler produced a different number of latent vectors than specified")
+        
                       
     def test_sampler_cuda(self):
         # Verify that the output of sampler is a CUDA tensor and not a CPU tensor when input is on CUDA
-        # The CPU case is not interesting because heteroencoder would have failed to load
         with TemporaryDirectory() as tmpdirname:
             latent=np.random.rand(64,1,512)
             os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
@@ -141,8 +156,6 @@ class test_GAN(unittest.TestCase):
         # Performs one step of training and verifies that the weights are updated, implying some training occurs.
         with TemporaryDirectory() as tmpdirname:
             T = torch.cuda.FloatTensor
-            # Writing JSON data
-            
             latent=np.random.rand(64,1,512)
             os.makedirs(os.path.dirname(tmpdirname+'/encoded_smiles.latent'), exist_ok=True)
             with open(tmpdirname+'/encoded_smiles.latent', 'w') as f:
