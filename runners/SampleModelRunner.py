@@ -6,10 +6,10 @@ import json
 
 class SampleModelRunner:
 
-    def __init__(self, output_smiles_file, input_model_path, sample_number):
+    def __init__(self, output_latent_file, input_model_path, sample_number):
         # init params
         self.input_model_path = input_model_path
-        self.output_smiles_file = output_smiles_file
+        self.output_latent_file = output_latent_file
         self.sample_number = sample_number
 
         self.G = Generator.load(input_model_path)
@@ -29,5 +29,5 @@ class SampleModelRunner:
         latent = S.sample(self.sample_number)
         latent = latent.detach().cpu().numpy().tolist()
 
-        with open(self.output_smiles_file, 'w') as json_file:
+        with open(self.output_latent_file, 'w') as json_file:
             json.dump(latent, json_file)
