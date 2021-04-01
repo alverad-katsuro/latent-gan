@@ -25,7 +25,7 @@ class SampleModelRunner:
         torch.no_grad()
         self.G.eval()
 
-        S = Sampler(generator=self.G, scaler=1)
+        S = Sampler(generator=self.G)
         latent = S.sample(self.sample_number)
         latent = latent.detach().cpu().numpy().tolist()
 
