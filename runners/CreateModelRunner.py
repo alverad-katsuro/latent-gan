@@ -18,6 +18,7 @@ class CreateModelRunner:
 
 
     def run(self):
+        self.CreateGenerator()
 
         
         # create Discriminator
@@ -28,7 +29,8 @@ class CreateModelRunner:
             os.makedirs(self.output_model_folder)
         discriminator_path = os.path.join(self.output_model_folder, 'discriminator.txt')
         D.save(discriminator_path)
-
+        
+    def CreateGenerator(self):
         # create Generator
         G = Generator(self.data_shape, latent_dim= self.data_shape[1])
 
