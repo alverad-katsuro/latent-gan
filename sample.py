@@ -1,10 +1,6 @@
-import json, argparse, sys
+import argparse, sys
 from decode import decode
-import torch
-from models.Generator import Generator
-from src.Sampler import Sampler
 from runners.SampleModelRunner import SampleModelRunner
-
 
 def sample(generator_path, output_sampled_latent_file, number_samples=50000, message='Sampling the generator',
            decode_sampled=False, output_decoded_smiles_file=''):
