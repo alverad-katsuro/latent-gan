@@ -3,37 +3,18 @@ from decode import decode
 import torch
 from models.Generator import Generator
 from src.Sampler import Sampler
+from runners.SampleModelRunner import SampleModelRunner
 
 
 def sample(generator_path, output_sampled_latent_file, number_samples=50000, message='Sampling the generator',
            decode_sampled=False, output_decoded_smiles_file=''):
     print(message)
-    sys.stdout.flush()
-    torch.no_grad()
-
-    # load generator
-    G = Generator.load(generator_path)
-    G.eval()
-
-    cuda = True if torch.cuda.is_available() else False
-    if cuda:
-        G.cuda()
-    # Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
-
-    S = Sampler(generator=G)
     print('Sampling model')
-    sys.stdout.flush()
-    latent = S.sample(number_samples)
-
-    latent = latent.detach().cpu().numpy().tolist()
-
-    with open(output_sampled_latent_file, 'w') as json_file:
-        # array_fake_mols = fake_mols.data
-        json.dump(latent, json_file)
+    S=SampleModelRunner(output_sampled_latent_file,generator_path,number_samples)
+    S.run()
 
     print('Sampling finished')
     sys.stdout.flush()
-    del latent, json_file, G, S
 
     # decoding sampled mols
     if decode_sampled:
