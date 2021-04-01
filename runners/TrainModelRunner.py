@@ -165,8 +165,7 @@ class TrainModelRunner:
             torch.no_grad()
             self.G.eval()
 
-            S = Sampler(generator=self.G)
-            latent = S.sample(self.sample_after_training)
+            latent = self.Sampler.sample(self.sample_after_training)
             latent = latent.detach().cpu().numpy().tolist()
 
             sampled_mols_save_path = os.path.join(self.output_model_folder, 'sampled.json')
