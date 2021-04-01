@@ -13,7 +13,7 @@ class CreateModelRunner:
         latent_vector_file = open(self.input_data_path, "r")
         latent_space_mols = np.array(json.load(latent_vector_file))
         shape = latent_space_mols.shape     # expecting tuple (set_size, dim_1, dim_2)
-
+        assert len(shape) == 3
         self.data_shape = tuple([shape[1], shape[2]])
 
 
