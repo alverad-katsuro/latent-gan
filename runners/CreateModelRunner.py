@@ -19,8 +19,9 @@ class CreateModelRunner:
 
     def run(self):
         self.CreateGenerator()
+        self.CreateDiscriminator()
 
-        
+    def CreateDiscriminator(self):        
         # create Discriminator
         D = Discriminator(self.data_shape)
 
