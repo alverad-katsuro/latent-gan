@@ -36,6 +36,8 @@ class CreateModelRunner:
         G = Generator(self.data_shape, latent_dim= self.data_shape[1])
 
         # save generator
+        if not os.path.exists(self.output_model_folder):
+            os.makedirs(self.output_model_folder)
         generator_path = os.path.join(self.output_model_folder, 'generator.txt')
         G.save(generator_path)
 
