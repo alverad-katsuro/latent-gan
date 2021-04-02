@@ -16,10 +16,10 @@ from tqdm import tqdm
 
 class TrainModelRunner:
     # Loss weight for gradient penalty
-    lambda_gp = 10
+    
 
     def __init__(self, input_data_path, output_model_folder, decode_mols_save_path='', n_epochs=2000, starting_epoch=1,
-                 batch_size=64, lr=0.0002, b1=0.5, b2=0.999,  n_critic=5,
+                 batch_size=64, lr=0.0002, b1=0.5, b2=0.999, lambda_gp = 10,  n_critic=5,
                  save_interval=1000, sample_after_training=30000, message=""):
         self.message = message
 
@@ -32,6 +32,7 @@ class TrainModelRunner:
         self.lr = lr
         self.b1 = b1
         self.b2 = b2
+        self.lambda_gp = lambda_gp
         self.n_critic = n_critic
         self.save_interval = save_interval
         self.sample_after_training = sample_after_training

@@ -4,11 +4,11 @@ import argparse
 from autoencoder import autoencoder
 import os
 
-def encode(smiles_file, output_smiles_file_path=None, encoder=None):
+def encode(smiles_file, output_latent_file_path=None, encoder=None):
     """
     Encoding smile strings into latent vectors that are used to train GAN
     :param smiles_file:
-    :param output_smiles_file_path:
+    :param output_latent_file_path:
     :return:
     """
     model = autoencoder.load_model(model_version=encoder)
@@ -26,8 +26,8 @@ def encode(smiles_file, output_smiles_file_path=None, encoder=None):
     latent = model.transform(model.vectorize(mols_in))
 
     # Writing JSON data
-    os.makedirs(os.path.dirname(output_smiles_file_path), exist_ok=True)
-    with open(output_smiles_file_path, 'w') as f:
+    os.makedirs(os.path.dirname(output_latent_file_path), exist_ok=True)
+    with open(output_latent_file_path, 'w') as f:
         json.dump(latent.tolist(), f)
 
     print('Encoding completed!')
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Load and train a model")
 
     parser.add_argument("--smiles-file", "-sf", help="The path to a data file.", type=str, required=True)
-    parser.add_argument("--output_smiles_file_path", "-o", help="Path to output smiles.", type=str)
+    parser.add_argument("--output_latent_file_path", "-o", help="Path to output smiles.", type=str)
     parser.add_argument("--encoder",
                         help="The data set the pre-trained heteroencoder has been trained on [chembl|moses] DEFAULT:chembl",
                         type=str)
